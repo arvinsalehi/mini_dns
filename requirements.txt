@@ -1,0 +1,16 @@
+fastapi==0.103.1
+uvicorn[standard]==0.23.1
+pydantic>=2.7.0
+motor==3.1.1
+python-dotenv==1.0.0
+email-validator
+pymongo==4.3.3
+pydantic-settings
+httpx
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-asyncio>=0.20.0
+mongomock>=4.0.0
+pytest-cov>=4.0.0
+coverage>=7.0.0
