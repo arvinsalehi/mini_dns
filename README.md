@@ -1,8 +1,9 @@
 # Mini DNS Service
+Documented by claude-sonnet-3.7
 
 A lightweight DNS service built with FastAPI that provides basic DNS record management capabilities.
 
-This project was forked from [fastapi-best-practices](https://github.com/purijs/fastapi-best-practices).
+This project structure was forked from [fastapi-best-practices](https://github.com/purijs/fastapi-best-practices).
 
 ## Features
 
@@ -41,13 +42,14 @@ This project was forked from [fastapi-best-practices](https://github.com/purijs/
 ### Environment Variables
 
 You can customize the service by setting the following environment variables in a `.env` file:
-NOTE: DEBUG enviroment is not implemented yet. So, There will be no effect.
+
 
 ```
 MONGODB_URI=mongodb://mongo:27017
 MONGODB_DB=testdb
 DEBUG=0
 ```
+NOTE: DEBUG enviroment is not implemented yet. So, There will be no effect.
 
 ## API Documentation
 
