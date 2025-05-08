@@ -37,7 +37,7 @@ class DNSRecord(BaseModel):
     type: str = Field(..., example="A or CNAME")  
     value: str = Field(..., example="192.168.1.1")
     
-    # Field-level validators
+    # @claude-sonnet-3.7
     @field_validator('hostname')
     @classmethod
     def validate_dns_hostname(cls, v: str) -> str:
@@ -47,6 +47,7 @@ class DNSRecord(BaseModel):
             raise ValueError(error_message)
         return v
     
+    # @claude-sonnet-3.7
     @field_validator('type')
     @classmethod
     def validate_dns_record_type(cls, v: str) -> str:
@@ -57,6 +58,7 @@ class DNSRecord(BaseModel):
         return v.upper() 
     
     # Conditional validation for value based on type
+    # @claude-sonnet-3.7
     @model_validator(mode='after')
     def validate_record_value(self) -> 'DNSRecord':
         """Validate the value field based on record type"""
