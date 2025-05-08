@@ -17,7 +17,7 @@ This project structure was forked from [fastapi-best-practices](https://github.c
   - Prevention of conflicting record types
   - Prevention of duplicate records
   - Proper hostname/IP format validation
-- **Health Check**: Minimal Docker health check. If fails restarts the container.
+- **Health Check**: Minimal Docker health check. (If failed restarts the container)
 ## Setup with Docker Compose
 
 ### Prerequisites
