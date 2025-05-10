@@ -40,10 +40,7 @@ def create_app() -> FastAPI:
     # Configure CORS settings
     add_cors(app)
 
-    # Debug ENV
-    # if settings.DEBUG:
-    #     logger.info("Running in debug mode")
-    
+
     @app.get("/healthcheck")
     async def healthcheck():
         """

@@ -1,45 +1,27 @@
 """
 NOTE Generated via Cursor running on claude-3.7-sonnet. Supervised by Arvin Salehi.
 
-Tests for DNS API functionality.
+Wrapper module for asynchronous MongoDB testing with mongomock.
 
-This module contains comprehensive tests for the DNS API, covering:
-1. CNAME record constraints
-2. Record conflict prevention
-3. CNAME chaining and circular reference detection
-4. Duplicate record prevention
-5. Input validation
-6. Error handling and status codes
+This module provides wrapper classes around `mongomock.Collection` and
+`mongomock.Cursor` to enable seamless asynchronous testing of applications
+that use the `motor` asynchronous MongoDB driver.
+
+The module contains:
+1.  AsyncMongoMockCollection:
+    A wrapper for `mongomock.Collection` that adds support for asynchronous methods similar to those found in `motor.motor_asyncio`.
+    Provides async equivalents for common synchronous `mongomock.Collection` methods.
+
+2.  AsyncCursor:
+    A wrapper for `mongomock.Cursor` that adds support for asynchronous iteration (`async for`) and the `to_list()` method, mirroring the functionality of `motor.motor_asyncio.AsyncIOMotorCursor`.
+    Enables processing the results of `mongomock` `find()` operations asynchronously.
+
+These wrappers are particularly useful in `pytest` fixtures for setting up
+mock MongoDB collections that can be used with asynchronous test functions.
 """
 
-import pytest
-from fastapi.testclient import TestClient
+from tests.shared.conftest import client, mock_collection
 from app.main import app
-import mongomock
-from unittest.mock import patch
-
-
-@pytest.fixture
-def client():
-    """Create a FastAPI test client."""
-    return TestClient(app)
-
-
-@pytest.fixture
-def mock_collection():
-    """Set up a mock MongoDB collection for testing."""
-    with patch('app.db.connectors.get_dns_collection') as mock_get_collection:
-        # Create mock collection
-        collection = mongomock.MongoClient().db.collection
-        mock_get_collection.return_value = collection
-        
-        # Clear collection before each test
-        collection.delete_many({})
-        
-        yield collection
-        
-        # Clean up after test
-        collection.delete_many({})
 
 
 def test_add_a_record_success(client, mock_collection):
@@ -57,7 +39,6 @@ def test_add_a_record_success(client, mock_collection):
     assert data["hostname"] == "example.com"
     assert data["type"] == "A"
     assert data["value"] == "192.168.1.1"
-
 
 def test_add_cname_record_success(client, mock_collection):
     """Test successfully adding a CNAME record."""
@@ -115,6 +96,7 @@ def test_cname_conflict_with_existing_records(client, mock_collection):
     assert "CNAME cannot coexist with other records" in response.json()["detail"]
 
 
+
 def test_a_record_conflict_with_cname(client, mock_collection):
     """Test that A record cannot be added if a CNAME exists."""
     # Add a CNAME record first
@@ -138,6 +120,7 @@ def test_a_record_conflict_with_cname(client, mock_collection):
     )
     assert response.status_code == 400
     assert "Cannot add A record when CNAME exists" in response.json()["detail"]
+
 
 
 def test_duplicate_a_record_prevention(client, mock_collection):
@@ -165,6 +148,7 @@ def test_duplicate_a_record_prevention(client, mock_collection):
     assert "Duplicate A record" in response.json()["detail"]
 
 
+
 def test_multiple_a_records_allowed(client, mock_collection):
     """Test that multiple A records with different values are allowed."""
     # Add first A record
@@ -189,6 +173,7 @@ def test_multiple_a_records_allowed(client, mock_collection):
     assert response.status_code == 200
     data = response.json()
     assert data["value"] == "192.168.1.2"
+
 
 
 def test_cname_chaining(client, mock_collection):
@@ -227,6 +212,7 @@ def test_cname_chaining(client, mock_collection):
     data = response.json()
     assert data["hostname"] == "www.example.com"
     assert data["addresses"] == ["192.168.1.1"]
+
 
 
 def test_circular_cname_detection(client, mock_collection):

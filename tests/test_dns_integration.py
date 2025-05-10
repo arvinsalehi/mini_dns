@@ -9,34 +9,9 @@ This module tests the complete workflow of the DNS service, focusing on:
 3. Complex scenarios involving multiple operations
 """
 
-import pytest
-from unittest.mock import patch
-from fastapi.testclient import TestClient
-from app.main import app
-import mongomock
+from tests.shared.conftest import client, mock_collection
 
 
-@pytest.fixture
-def client():
-    """Create a FastAPI test client."""
-    return TestClient(app)
-
-
-@pytest.fixture
-def mock_collection():
-    """Set up a mock MongoDB collection for testing."""
-    with patch('app.db.connectors.get_dns_collection') as mock_get_collection:
-        # Create mock collection
-        collection = mongomock.MongoClient().db.collection
-        mock_get_collection.return_value = collection
-        
-        # Clear collection before each test
-        collection.delete_many({})
-        
-        yield collection
-        
-        # Clean up after test
-        collection.delete_many({})
 
 
 def test_complete_dns_workflow(client, mock_collection):
